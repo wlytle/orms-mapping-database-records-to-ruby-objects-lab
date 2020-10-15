@@ -1,7 +1,6 @@
-require_relative 'spec_helper'
-require 'pry'
+require_relative "spec_helper"
+require "pry"
 describe Student do
-
   before do
     Student.create_table
   end
@@ -10,19 +9,19 @@ describe Student do
     Student.drop_table
   end
 
-  let(:pat) {Student.new}
-  let(:sam) {Student.new}
-  let(:jess) {Student.new}
+  let(:pat) { Student.new }
+  let(:sam) { Student.new }
+  let(:jess) { Student.new }
   let(:attributes) {
     {
       :id => 1,
-      :name => 'Pat',
-      :grade => 12
+      :name => "Pat",
+      :grade => 12,
     }
   }
 
-  describe 'attributes' do
-    it 'has an id, name, grade' do
+  describe "attributes" do
+    it "has an id, name, grade" do
       pat.id = attributes[:id]
       pat.name = attributes[:name]
       pat.grade = attributes[:grade]
@@ -33,17 +32,17 @@ describe Student do
     end
   end
 
-  describe '.create_table' do
-    it 'creates a student table' do
+  describe ".create_table" do
+    it "creates a student table" do
       Student.drop_table
       Student.create_table
 
       table_check_sql = "SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name='students';"
-      expect(DB[:conn].execute(table_check_sql)[0]).to eq(['students'])
+      expect(DB[:conn].execute(table_check_sql)[0]).to eq(["students"])
     end
   end
 
-  describe '.drop_table' do
+  describe ".drop_table" do
     it "drops the student table" do
       Student.create_table
       Student.drop_table
@@ -54,14 +53,14 @@ describe Student do
   end
 
   describe "#save" do
-    it 'saves an instance of the Student class to the database' do
+    it "saves an instance of the Student class to the database" do
       pat.save
       expect(DB[:conn].execute("SELECT * FROM students")).to eq([[1, nil, nil]])
     end
   end
 
-  describe '.new_from_db' do
-    it 'creates an instance with corresponding attribute values' do
+  describe ".new_from_db" do
+    it "creates an instance with corresponding attribute values" do
       row = [1, "Pat", 12]
       pat = Student.new_from_db(row)
 
@@ -71,10 +70,9 @@ describe Student do
     end
   end
 
-  describe 'retrieving data from the db' do
-    describe '.find_by_name' do
-
-      it 'returns an instance of student that matches the name from the DB' do
+  describe "retrieving data from the db" do
+    describe ".find_by_name" do
+      it "returns an instance of student that matches the name from the DB" do
         pat.name = "Pat"
         pat.grade = 12
         pat.save
@@ -85,8 +83,8 @@ describe Student do
       end
     end
 
-    describe '.all_students_in_grade_9' do
-      it 'returns an array of all students in grades 9' do
+    describe ".all_students_in_grade_9" do
+      it "returns an array of all students in grades 9" do
         pat.name = "Pat"
         pat.grade = 12
         pat.save
@@ -99,8 +97,8 @@ describe Student do
       end
     end
 
-    describe '.students_below_12th_grade' do
-      it 'returns an array of all students in grades 11 or below' do
+    describe ".students_below_12th_grade" do
+      it "returns an array of all students in grades 11 or below" do
         pat.name = "Pat"
         pat.grade = 12
         pat.save
@@ -110,12 +108,12 @@ describe Student do
 
         all_but_12th = Student.students_below_12th_grade
         expect(all_but_12th.size).to eq(1)
-        expect(all_but_12th.first.name).to eq('Sam')
+        expect(all_but_12th.first.name).to eq("Sam")
       end
     end
 
-    describe '.all' do
-      it 'returns all student instances from the db' do
+    describe ".all" do
+      it "returns all student instances from the db" do
         pat.name = "Pat"
         pat.grade = 12
         pat.save
@@ -126,13 +124,12 @@ describe Student do
         all_from_db = Student.all
         expect(all_from_db.size).to eq(2)
         expect(all_from_db.last).to be_an_instance_of(Student)
-        expect(all_from_db.any? {|student| student.name == "Sam"}).to eq(true)
+        expect(all_from_db.any? { |student| student.name == "Sam" }).to eq(true)
       end
     end
 
-    describe '.first_X_students_in_grade_10' do
-      it 'returns an array of the first X students in grade 10' do
-
+    describe ".first_X_students_in_grade_10" do
+      it "returns an array of the first X students in grade 10" do
         pat.name = "Pat"
         pat.grade = 10
         pat.save
@@ -142,18 +139,18 @@ describe Student do
         jess.name = "Jess"
         jess.grade = 10
         jess.save
-        
+
         first_X_students = Student.first_X_students_in_grade_10(2)
-        expect(first_X_students.size).to eq(2), 'Requested first 2 students in grade 10. Expected Array of two elements'
-        expect(first_X_students.all? {|student| student.class == Student}).to eq(true), 'Expected Array of Student instances'
+        expect(first_X_students.size).to eq(2), "Requested first 2 students in grade 10. Expected Array of two elements"
+        expect(first_X_students.all? { |student| student.class == Student }).to eq(true), "Expected Array of Student instances"
         first_X_students = Student.first_X_students_in_grade_10(3)
-        expect(first_X_students.size).to eq(3), 'Requested first 3 students in grade 10. Expected Array of three elements'
-        expect(first_X_students.all? {|student| student.class == Student}).to eq(true), 'Expected Array of Student instances'
+        expect(first_X_students.size).to eq(3), "Requested first 3 students in grade 10. Expected Array of three elements"
+        expect(first_X_students.all? { |student| student.class == Student }).to eq(true), "Expected Array of Student instances"
       end
     end
 
-    describe '.first_student_in_grade_10' do
-      it 'returns the first student in grade 10' do
+    describe ".first_student_in_grade_10" do
+      it "returns the first student in grade 10" do
         pat.name = "Pat"
         pat.grade = 12
         pat.id = 1
@@ -175,8 +172,8 @@ describe Student do
       end
     end
 
-    describe '.all_students_in_grade_X' do
-      it 'returns an array of all students in a given grade X' do
+    describe ".all_students_in_grade_X" do
+      it "returns an array of all students in a given grade X" do
         pat.name = "Pat"
         pat.grade = 10
         pat.save
